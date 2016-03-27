@@ -1,5 +1,4 @@
 # CoreDataExample
 That little and informative example, demonstrated how work with CoreData
 
-![MainView](/images/main.png)
-Format: ![Alt Text](url)
+![MainView](https://github.com/SpectralDragon/CoreDataExample/blob/master/image/main.PNG)
