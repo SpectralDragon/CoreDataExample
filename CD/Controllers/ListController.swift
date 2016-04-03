@@ -1,3 +1,4 @@
+
 //
 //  ViewController.swift
 //  CoreData Example
@@ -12,21 +13,29 @@ import CoreData
 private let coreDataHelper = CoreDataHelper()
 private let context = coreDataHelper.managedObjectContext
 
-class ViewController: UIViewController {
+class ListController: UIViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     private var result: [AnyObject]?
+    private var searchActive = true
+    private var searchPredicat: NSPredicate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateTable()
-        
+
         //Delete excess seporator
         let background = UIView(frame: CGRectZero)
         tableView.tableFooterView = background
         
+        
         //Observe call in another View
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(updateTable), name: "updateTable", object: nil)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        searchBar.barTintColor =  UIColor(red: 2/255.0, green: 17/255.0, blue: 37/255.0, alpha: 1.0)
+        updateTable()
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,8 +52,36 @@ class ViewController: UIViewController {
     }
 }
 
+//MARK: - UISearchBarDelegate
+extension ListController: UISearchBarDelegate {
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        let request = NSFetchRequest(entityName: "Profile")
+        request.returnsObjectsAsFaults = false
+        
+        searchPredicat = NSPredicate(format: "firstName = %@", searchText)
+        let compound = NSCompoundPredicate.init(andPredicateWithSubpredicates: [searchPredicat!])
+        request.predicate = compound
+        
+        print(searchPredicat)
+        result = try? context.executeFetchRequest(request)
+        print(result)
+        tableView.reloadData()
+    }
+
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchPredicat = nil
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        if searchPredicat == nil {
+            updateTable()
+        }
+    }
+}
+
 //MARK: - UITableViewDelegate
-extension ViewController: UITableViewDelegate {
+extension ListController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let detailProfile = storyboard?.instantiateViewControllerWithIdentifier("detailProfile") as! DetailProfileController
@@ -63,29 +100,31 @@ extension ViewController: UITableViewDelegate {
 }
 
 //MARK: - UITableViewDataSource
-extension ViewController: UITableViewDataSource {
+extension ListController: UITableViewDataSource {
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard result?.count != nil else {
+            return 0
+        }
+        return (result?.count)!
+    }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         switch  editingStyle {
         case .Delete:
             context.deleteObject(result![indexPath.row] as! NSManagedObject)
             result?.removeAtIndex(indexPath.row)
+            
             do {
                 try context.save()
             } catch let error as NSError {
-                NSLog("Error \(error), \(error.userInfo)")
+                print("Error \(error), \(error.userInfo)")
             }
-
+            
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         default:
             return
         }
-    }
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard result?.count != nil else {
-            return 0
-        }
-        return (result?.count)!
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

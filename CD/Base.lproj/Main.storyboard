@@ -8,7 +8,7 @@
         <!--Contacts-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="mainController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="ViewController" customModule="CoreDataExem" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="mainController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="ListController" customModule="CoreDataExem" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -20,6 +20,14 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ecx-4f-47G">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search profile" id="eYx-Cc-bEi">
+                                    <rect key="frame" x="0.0" y="64" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="BYZ-38-t0r" id="Dcd-MO-JeP"/>
+                                    </connections>
+                                </searchBar>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="hD2-OV-F5b"/>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="kgK-GG-PGe"/>
@@ -37,16 +45,27 @@
                     <navigationItem key="navigationItem" title="Contacts" id="yyZ-GD-SdV">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Chr-Tt-HV4">
                             <connections>
-                                <segue destination="SPw-ZE-4uN" kind="show" id="OVe-Bp-JEh"/>
+                                <segue destination="SPw-ZE-4uN" kind="show" identifier="newContact" id="OVe-Bp-JEh"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchBar" destination="eYx-Cc-bEi" id="GKH-ee-axC"/>
+                        <outlet property="searchDisplayController" destination="BhY-oR-yaG" id="Uet-7p-yAj"/>
                         <outlet property="tableView" destination="Ecx-4f-47G" id="dAH-xx-GZn"/>
-                        <segue destination="eFb-f5-81k" kind="show" id="lhW-Ll-rY9"/>
+                        <segue destination="eFb-f5-81k" kind="show" identifier="detailContact" id="lhW-Ll-rY9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="BhY-oR-yaG">
+                    <connections>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="LuV-6X-qJF"/>
+                        <outlet property="searchBar" destination="eYx-Cc-bEi" id="2Uq-P6-YnI"/>
+                        <outlet property="searchContentsController" destination="BYZ-38-t0r" id="Igj-Di-wZK"/>
+                        <outlet property="searchResultsDataSource" destination="BYZ-38-t0r" id="UeS-9a-j4K"/>
+                        <outlet property="searchResultsDelegate" destination="BYZ-38-t0r" id="rbJ-Iv-CBT"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1135" y="321"/>
         </scene>
